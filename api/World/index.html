@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.7.0">
+<title data-rh="true">World | Jecs Community Wiki</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://YetAnotherClown.github.io/jecs-community/api/World"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="World | Jecs Community Wiki"><meta data-rh="true" name="description" content="A world stores all of your Entities and Components, providing an
+API to manage them.
+	"><meta data-rh="true" property="og:description" content="A world stores all of your Entities and Components, providing an
+API to manage them.
+	"><link data-rh="true" rel="canonical" href="https://YetAnotherClown.github.io/jecs-community/api/World"><link data-rh="true" rel="alternate" href="https://YetAnotherClown.github.io/jecs-community/api/World" hreflang="en"><link data-rh="true" rel="alternate" href="https://YetAnotherClown.github.io/jecs-community/api/World" hreflang="x-default"><link rel="stylesheet" href="/jecs-community/assets/css/styles.4b3fd11e.css">
+<script src="/jecs-community/assets/js/runtime~main.82dad5a6.js" defer="defer"></script>
+<script src="/jecs-community/assets/js/main.9253cd3a.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();null!==e?t(e):window.matchMedia("(prefers-color-scheme: dark)").matches?t("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,t("light"))}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/jecs-community/"><b class="navbar__title text--truncate">Jecs Community Wiki</b></a><a class="navbar__item navbar__link" href="/jecs-community/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/jecs-community/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/YetAnotherClown/jecs-community" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input id="search_input_react" type="search" placeholder="Loading..." aria-label="Search" class="navbar__search-input search-bar" disabled=""></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0 docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/jecs-community/api/Jecs">​Jecs</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/jecs-community/api/World">​World</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/jecs-community/api/Query">​Query</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">World</span></h1><div class="luaClassTags_EipM"></div><div>
+<p>
+  A world stores all of your Entities and Components, providing an
+  API to manage them.
+</p>
+</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="types">Types<a href="#types" class="hash-link" aria-label="Direct link to Types" title="Direct link to Types">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Column"><code style="text-decoration:none">Column</code><a href="#Column" class="hash-link" aria-label="Direct link to Column" title="Direct link to Column">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L18"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">type</code> <code>Column<!-- --> = </code> <code class="purple_ieR2">{</code><code class="blue_P4bS">any</code><code class="purple_ieR2">}</code></div><div></div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Archetype"><code style="text-decoration:none">Archetype</code><a href="#Archetype" class="hash-link" aria-label="Direct link to Archetype" title="Direct link to Archetype">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L32"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>Archetype<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>id<!-- -->: </code><code class="blue_P4bS">number</code></div><div><code>types<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code class="purple_ieR2">}</code></div><div><code>type<!-- -->: </code><code class="blue_P4bS">string</code></div><div><code>entities<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code class="purple_ieR2">}</code></div><div><code>columns<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/World#Column">Column</a></code><code class="purple_ieR2">}</code></div><div><code>columnsMap<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>]</code></span><code>: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/World#Column">Column</a></code><code class="purple_ieR2">}</code></div></div><code>}</code></div><div>
+<p>
+  Represents the internal storage of the ECS.
+  For more information on Archetypes, read <a href="https://github.com/Ukendio/jecs/blob/main/how_to/030_archetypes.luau">here</a>.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Listener"><code style="text-decoration:none">Listener</code><a href="#Listener" class="hash-link" aria-label="Direct link to Listener" title="Direct link to Listener">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3266"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">type</code> <code>Listener<!-- --> = </code> <code class="purple_ieR2">(</code><div class="inset_uKQm"><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">T</code><code class="op_lSLc">&gt;</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>value<!-- -->: </code><code class="blue_P4bS">T</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>oldArchetype<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/World#Archetype">Archetype</a></code></div><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code></div><div>
+<p>A callback type used in <a href="/jecs-community/api/World#added">World:added</a> and <a href="/jecs-community/api/World#changed">World:changed</a>.</p>
+</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="range"><code style="text-decoration:none">range</code><a href="#range" class="hash-link" aria-label="Direct link to range" title="Direct link to range">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L1272"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">range</code><code>(</code><div class="inset_uKQm"><div><code>rangeBegin<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The id to start at</p>
+</span></span></div><div><code>rangeEnd<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
+<p>The optional id to end at</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Enforces that entities created will have ids between the given range.</p>
+<pre class="language-lua"><code class="language-lua">world<span class="token punctuation">:</span><span class="token function">range</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">,</span> <span class="token number">5000</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> entity <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token function">print</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span> <span class="token comment">-- Will be >= 1000 and &#x3C; 5000</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="query"><code style="text-decoration:none">query</code><a href="#query" class="hash-link" aria-label="Direct link to query" title="Direct link to query">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L2527"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">query</code><code>(</code><div class="inset_uKQm"><div><code>...<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Components to query for</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Query">Query</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Query object</p>
+</span></span></div><div>
+<p>
+  Creates a <a href="/jecs-community/api/Query">Query</a> object to iterate over all entities with the given
+  components, returning the entity id and values of each component.
+</p>
+
+  
+    
+    
+      <div class="admonition admonition-success alert alert--success">
+        <div class="admonition-heading">
+          <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16">
+                <path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path>
+              </svg></span><span class="admonition-title">TIP</span></h5>
+        </div>
+        <div class="admonition-content">
+          <p>Queries can do much more! See <a href="/jecs-community/api/Query">Query</a> to see the additional methods you can chain together.</p>
+        </div>
+      </div>
+    
+  
+
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">for</span> id<span class="token punctuation">,</span> health<span class="token punctuation">,</span> position <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">query</span><span class="token punctuation">(</span>Health<span class="token punctuation">,</span> Position<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token function">with</span><span class="token punctuation">(</span>Enemy<span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token comment">-- ...</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="each"><code style="text-decoration:none">each</code><a href="#each" class="hash-link" aria-label="Direct link to each" title="Direct link to each">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L2556"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">each</code><code>(</code><div class="inset_uKQm"><div><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component Id</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>An iterator that returns all relevant entities</p>
+</span></span></div><div>
+<p>Allows for the iteration over all entities with the given component.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Component <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> id <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">each</span><span class="token punctuation">(</span>Component<span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token comment">-- ...</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="children"><code style="text-decoration:none">children</code><a href="#children" class="hash-link" aria-label="Direct link to children" title="Direct link to children">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L2606"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">children</code><code>(</code><div class="inset_uKQm"><div><code>parent<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Parent Entity</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>An iterator that returns all relevant entities</p>
+</span></span></div><div>
+<p>
+  Allows for the iteration over all entities that are a child of the
+  given entity.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">for</span> child <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">children</span><span class="token punctuation">(</span>parent<span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token comment">-- ...</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="set"><code style="text-decoration:none">set</code><a href="#set" class="hash-link" aria-label="Direct link to set" title="Direct link to set">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L2981"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">set</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">T</code><code class="op_lSLc">&gt;</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component Id to set</p>
+</span></span></div><div><code>data<!-- -->: </code><code class="blue_P4bS">T</code></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>
+  Assigns a value to a component on the given entity, adding the
+  component if the entity does not already have it.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Apples <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Eats <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Name <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> entity <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">set</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Name<span class="token punctuation">,</span> <span class="token string">"Bob"</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">set</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Jecs<span class="token punctuation">.</span><span class="token function">pair</span><span class="token punctuation">(</span>Eats<span class="token punctuation">,</span> Apples<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span> <span class="token comment">-- Bob ate 10 apples!</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="add"><code style="text-decoration:none">add</code><a href="#add" class="hash-link" aria-label="Direct link to add" title="Direct link to add">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3105"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">add</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">T</code><code class="op_lSLc">&gt;</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component Id to add</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Adds a component to the given entity.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Enemy <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Dislikes <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Player <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> player <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">add</span><span class="token punctuation">(</span>player<span class="token punctuation">,</span> Player<span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> entity <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">add</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Enemy<span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">add</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Jecs<span class="token punctuation">.</span><span class="token function">pair</span><span class="token punctuation">(</span>Dislikes<span class="token punctuation">,</span> player<span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="get"><code style="text-decoration:none">get</code><a href="#get" class="hash-link" aria-label="Direct link to get" title="Direct link to get">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3230"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">get</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>a<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">A</code><code class="op_lSLc">&gt;</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The first Component</p>
+</span></span></div><div><code>b<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">B</code><code class="op_lSLc">&gt;</code><code class="blue_P4bS">?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The second Component</p>
+</span></span></div><div><code>c<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">C</code><code class="op_lSLc">&gt;</code><code class="blue_P4bS">?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The third Component</p>
+</span></span></div><div><code>d<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">D</code><code class="op_lSLc">&gt;</code><code class="blue_P4bS">?</code><span class="inlineDescription_G7Er">-- <span>
+<p>The fourth Component</p>
+</span></span></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">A?</code><code>,</code></div><div><code class="blue_P4bS">B?</code><code>,</code></div><div><code class="blue_P4bS">C?</code><code>,</code></div><div><code class="blue_P4bS">D?</code></div></div><code>)</code></div><div>
+<p>
+  Retrieves the value(s) of up to 4 components, returning <code>nil</code> if
+  the component is a tag or not present on the entity.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Health <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> entity <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">set</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Health<span class="token punctuation">,</span> <span class="token number">100</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> health<span class="token punctuation">:</span> number? <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">get</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Health<span class="token punctuation">)</span>
+<span class="token function">print</span><span class="token punctuation">(</span>health<span class="token punctuation">)</span> <span class="token comment">-- Output: 100</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="added"><code style="text-decoration:none">added</code><a href="#added" class="hash-link" aria-label="Direct link to added" title="Direct link to added">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3281"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">added</code><code>(</code><div class="inset_uKQm"><div><code>component<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component to listen for</p>
+</span></span></div><div><code>fn<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/World#Listener">Listener</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The function to call when a component is added</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><span class="inlineDescription_G7Er">-- <span>
+<p>A function to cleanup the listener</p>
+</span></span></div><div>
+<p>
+  Sets a callback that is invoked when the given component is added
+  to an entity.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="changed"><code style="text-decoration:none">changed</code><a href="#changed" class="hash-link" aria-label="Direct link to changed" title="Direct link to changed">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3332"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">changed</code><code>(</code><div class="inset_uKQm"><div><code>component<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component to listen for</p>
+</span></span></div><div><code>fn<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/World#Listener">Listener</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The function to call when a component's value is changed</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><span class="inlineDescription_G7Er">-- <span>
+<p>A function to cleanup the listener</p>
+</span></span></div><div>
+<p>
+  Sets a callback that is invoked when the given component's value is
+  changed on an entity.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="removed"><code style="text-decoration:none">removed</code><a href="#removed" class="hash-link" aria-label="Direct link to removed" title="Direct link to removed">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3388"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">removed</code><code>(</code><div class="inset_uKQm"><div><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Component to listen for</p>
+</span></span></div><div><code>fn<!-- -->: </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>deleted<!-- -->: </code><code class="blue_P4bS">boolean?</code></div><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><span class="inlineDescription_G7Er">-- <span>
+<p>The function to call when a component is removed</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><span class="inlineDescription_G7Er">-- <span>
+<p>A function to cleanup the listener</p>
+</span></span></div><div>
+<p>
+  Sets a callback that is invoked when the given component is removed
+  from an entity.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="has"><code style="text-decoration:none">has</code><a href="#has" class="hash-link" aria-label="Direct link to has" title="Direct link to has">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3458"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">has</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>a<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The first Component</p>
+</span></span></div><div><code>b<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id?</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The second Component</p>
+</span></span></div><div><code>c<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id?</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The third Component</p>
+</span></span></div><div><code>d<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id?</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The fourth Component</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>
+  Checks if up to 4 components are present on an entity, returning
+  <code>true</code> if the entity has all 4 components or <code>false</code> if the entity
+  does not have at least one.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Enemy <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> entity <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">add</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Enemy<span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> isEnemy<span class="token punctuation">:</span> boolean <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">has</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Enemy<span class="token punctuation">)</span>
+<span class="token function">print</span><span class="token punctuation">(</span>isEnemy<span class="token punctuation">)</span> <span class="token comment">-- Output: true</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="target"><code style="text-decoration:none">target</code><a href="#target" class="hash-link" aria-label="Direct link to target" title="Direct link to target">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3523"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">target</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>relation<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The first element of a pair</p>
+</span></span></div><div><code>nth:<!-- -->: </code><code class="blue_P4bS">number?</code></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id?</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The target, or the second element of a pair</p>
+</span></span></div><div>
+<p>
+  Given a relation, this will return the target of the <code>nth</code>
+  relationship of the entity, where the first element of a pair is the relation and the second element of a pair is the target.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> ChildOf <span class="token operator">=</span> Jecs<span class="token punctuation">.</span>ChildOf
+<span class="token keyword">local</span> Character <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Player <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> entity <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">query</span><span class="token punctuation">(</span>Character<span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token keyword">local</span> player<span class="token punctuation">:</span> Entity? <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">target</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> ChildOf<span class="token punctuation">)</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>world<span class="token punctuation">:</span><span class="token function">has</span><span class="token punctuation">(</span>player<span class="token punctuation">,</span> Player<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment">-- Output: true</span>
+<span class="token keyword">end</span>
+</code></pre>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Likes <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Name <span class="token operator">=</span> Jecs<span class="token punctuation">.</span>Name
+<span class="token keyword">local</span> Wildcard <span class="token operator">=</span> Jecs<span class="token punctuation">.</span>Wildcard
+
+<span class="token keyword">for</span> id<span class="token punctuation">,</span> name <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">query</span><span class="token punctuation">(</span>Name<span class="token punctuation">,</span> <span class="token function">pair</span><span class="token punctuation">(</span>Likes<span class="token punctuation">,</span> Wildcard<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token keyword">local</span> nth <span class="token operator">=</span> <span class="token number">0</span>
+	<span class="token keyword">local</span> likes<span class="token punctuation">:</span> Entity? <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">target</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Likes<span class="token punctuation">,</span> nth<span class="token punctuation">)</span>
+
+	<span class="token keyword">while</span> likes <span class="token keyword">do</span>
+		<span class="token keyword">local</span> friendsName<span class="token punctuation">:</span> string? <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">get</span><span class="token punctuation">(</span>likes<span class="token punctuation">,</span> Name<span class="token punctuation">)</span>
+		<span class="token function">print</span><span class="token punctuation">(</span>`<span class="token punctuation">{</span>name<span class="token punctuation">}</span> <span class="token function">likes</span> <span class="token punctuation">{</span>friendsName<span class="token punctuation">}</span>`<span class="token punctuation">)</span>
+
+		nth <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">1</span>
+		likes <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">target</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> Likes<span class="token punctuation">,</span> nth<span class="token punctuation">)</span>
+		<span class="token keyword">end</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="parent"><code style="text-decoration:none">parent</code><a href="#parent" class="hash-link" aria-label="Direct link to parent" title="Direct link to parent">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3585"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">parent</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id?</a></code></div><div>
+<p>
+  Returns the parent of an entity, where the parent is the target of a
+  <code>ChildOf</code> relationship, or nil if there is no relationship pair.
+</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> ChildOf <span class="token operator">=</span> Jecs<span class="token punctuation">.</span>ChildOf
+<span class="token keyword">local</span> Character <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Player <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">component</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> entity <span class="token keyword">in</span> world<span class="token punctuation">:</span><span class="token function">query</span><span class="token punctuation">(</span>Character<span class="token punctuation">)</span> <span class="token keyword">do</span>
+	<span class="token keyword">local</span> player<span class="token punctuation">:</span> Entity? <span class="token operator">=</span> world<span class="token punctuation">:</span><span class="token function">parent</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>world<span class="token punctuation">:</span><span class="token function">has</span><span class="token punctuation">(</span>player<span class="token punctuation">,</span> Player<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment">-- Output: true</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="entity"><code style="text-decoration:none">entity</code><a href="#entity" class="hash-link" aria-label="Direct link to entity" title="Direct link to entity">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3598"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">entity</code><code>(</code><div class="inset_uKQm"><div><code>id<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
+<p>The id to spawn the entity at</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div>
+<p>Spawns a new entity, at the specified id if given.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="remove"><code style="text-decoration:none">remove</code><a href="#remove" class="hash-link" aria-label="Direct link to remove" title="Direct link to remove">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3677"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">remove</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div><div><code>id<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Id">Id</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The component to remove</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Removes a component from the given entity.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="delete"><code style="text-decoration:none">delete</code><a href="#delete" class="hash-link" aria-label="Direct link to delete" title="Direct link to delete">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3710"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">delete</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Deletes an entity, as well as all of it's components and relationships.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="clear"><code style="text-decoration:none">clear</code><a href="#clear" class="hash-link" aria-label="Direct link to clear" title="Direct link to clear">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3910"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">clear</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Clears all of the components and relationships from the given entity, but does not delete the entity. Instead, you can use <a href="/jecs-community/api/World#delete">World:delete</a> to delete an entity and all of it's components.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="exists"><code style="text-decoration:none">exists</code><a href="#exists" class="hash-link" aria-label="Direct link to exists" title="Direct link to exists">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3939"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">exists</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>
+  Given an entity id, returns <code>true</code> if the id exists in the world,
+  or <code>false</code>, disregarding whether or not the entity is alive.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="contains"><code style="text-decoration:none">contains</code><a href="#contains" class="hash-link" aria-label="Direct link to contains" title="Direct link to contains">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3953"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">contains</code><code>(</code><div class="inset_uKQm"><div><code>entity<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Entity">Entity</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The Entity Id</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>
+  Given an entity id, returns <code>true</code> if the id exists and is alive
+  in the world, or <code>false</code>.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="cleanup"><code style="text-decoration:none">cleanup</code><a href="#cleanup" class="hash-link" aria-label="Direct link to cleanup" title="Direct link to cleanup">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L3967"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">cleanup</code><code>(</code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Cleans the world of empty archetypes.</p>
+<p>
+  The interval at which you should call this method varies per
+  application, and you should profile your application to determine
+  this interval.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="component"><code style="text-decoration:none">component</code><a href="#component" class="hash-link" aria-label="Direct link to component" title="Direct link to component">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/YetAnotherClown/jecs-community/blob/master/src/jecs.luau#L4002"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>World<!-- -->:</code><code class="green_DgR4">component</code><code>(</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/jecs-community/api/Jecs#Component">Component</a></code></div><div>
+<p>Creates a new component.</p>
+
+  
+    
+    
+      <div class="admonition admonition-success alert alert--success">
+        <div class="admonition-heading">
+          <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16">
+                <path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path>
+              </svg></span><span class="admonition-title">TIP</span></h5>
+        </div>
+        <div class="admonition-content">
+          <p>
+            Components are also entities in Jecs, where the first 256
+            entity ids are reserved for components.
+          </p>
+        </div>
+      </div>
+    
+  
+
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;range&quot;,
+            &quot;desc&quot;: &quot;Enforces that entities created will have ids between the given range.\n\n```lua\nworld:range(1000, 5000)\n\nlocal entity = world:entity()\nprint(entity) -- Will be &gt;= 1000 and &lt; 5000\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;rangeBegin&quot;,
+                    &quot;desc&quot;: &quot;The id to start at&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;rangeEnd&quot;,
+                    &quot;desc&quot;: &quot;The optional id to end at&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 1272,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;query&quot;,
+            &quot;desc&quot;: &quot;Creates a [Query] object to iterate over all entities with the given\ncomponents, returning the entity id and values of each component.\n\n:::tip\nQueries can do much more! See [Query] to see the additional methods you can chain together.\n:::\n\n```lua\nfor id, health, position in world:query(Health, Position):with(Enemy) do\n\t-- ...\nend\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;The Components to query for&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The Query object&quot;,
+                    &quot;lua_type&quot;: &quot;Query&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 2527,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;each&quot;,
+            &quot;desc&quot;: &quot;Allows for the iteration over all entities with the given component.\n\n```lua\nlocal Component = world:component()\n\nfor id in world:each(Component) do\n\t-- ...\nend\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The Component Id&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;An iterator that returns all relevant entities&quot;,
+                    &quot;lua_type&quot;: &quot;() -&gt; Entity&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 2556,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;children&quot;,
+            &quot;desc&quot;: &quot;Allows for the iteration over all entities that are a child of the\ngiven entity.\n\n```lua\nfor child in world:children(parent) do\n\t-- ...\nend\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;parent&quot;,
+                    &quot;desc&quot;: &quot;The Parent Entity&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;An iterator that returns all relevant entities&quot;,
+                    &quot;lua_type&quot;: &quot;() -&gt; Entity&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 2606,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;set&quot;,
+            &quot;desc&quot;: &quot;Assigns a value to a component on the given entity, adding the\ncomponent if the entity does not already have it.\n\n```lua\nlocal Apples = world:component()\nlocal Eats = world:component()\nlocal Name = world:component()\n\nlocal entity = world:entity()\nworld:set(entity, Name, \&quot;Bob\&quot;)\nworld:set(entity, Jecs.pair(Eats, Apples), 10) -- Bob ate 10 apples!\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The Component Id to set&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;T&gt;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;data&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;T&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 2981,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;add&quot;,
+            &quot;desc&quot;: &quot;Adds a component to the given entity.\n\n```lua\nlocal Enemy = world:component()\nlocal Dislikes = world:component()\nlocal Player = world:component()\n\nlocal player = world:entity()\nworld:add(player, Player)\n\nlocal entity = world:entity()\nworld:add(entity, Enemy)\nworld:add(entity, Jecs.pair(Dislikes, player))\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The Component Id to add&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;T&gt;&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3105,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;get&quot;,
+            &quot;desc&quot;: &quot;Retrieves the value(s) of up to 4 components, returning `nil` if\nthe component is a tag or not present on the entity.\n\n```lua\nlocal Health = world:component()\n\nlocal entity = world:entity()\nworld:set(entity, Health, 100)\n\nlocal health: number? = world:get(entity, Health)\nprint(health) -- Output: 100\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;The first Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;A&gt;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;The second Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;B&gt;?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;c&quot;,
+                    &quot;desc&quot;: &quot;The third Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;C&gt;?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;d&quot;,
+                    &quot;desc&quot;: &quot;The fourth Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id&lt;D&gt;?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;A?&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;B?&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;C?&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;D?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3230,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;added&quot;,
+            &quot;desc&quot;: &quot;Sets a callback that is invoked when the given component is added\nto an entity.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;component&quot;,
+                    &quot;desc&quot;: &quot;The Component to listen for&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;fn&quot;,
+                    &quot;desc&quot;: &quot;The function to call when a component is added&quot;,
+                    &quot;lua_type&quot;: &quot;Listener&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;A function to cleanup the listener&quot;,
+                    &quot;lua_type&quot;: &quot;() -&gt; ()&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3281,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;changed&quot;,
+            &quot;desc&quot;: &quot;Sets a callback that is invoked when the given component&#x27;s value is\nchanged on an entity.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;component&quot;,
+                    &quot;desc&quot;: &quot;The Component to listen for&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;fn&quot;,
+                    &quot;desc&quot;: &quot;The function to call when a component&#x27;s value is changed&quot;,
+                    &quot;lua_type&quot;: &quot;Listener&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;A function to cleanup the listener&quot;,
+                    &quot;lua_type&quot;: &quot;() -&gt; ()&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3332,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;removed&quot;,
+            &quot;desc&quot;: &quot;Sets a callback that is invoked when the given component is removed\nfrom an entity.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The Component to listen for&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;fn&quot;,
+                    &quot;desc&quot;: &quot;The function to call when a component is removed&quot;,
+                    &quot;lua_type&quot;: &quot;(entity: Entity, id: Id, deleted: boolean?) -&gt; ()&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;A function to cleanup the listener&quot;,
+                    &quot;lua_type&quot;: &quot;() -&gt; ()&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3388,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;has&quot;,
+            &quot;desc&quot;: &quot;Checks if up to 4 components are present on an entity, returning\n`true` if the entity has all 4 components or `false` if the entity\ndoes not have at least one.\n\n```lua\nlocal Enemy = world:component()\n\nlocal entity = world:entity()\nworld:add(entity, Enemy)\n\nlocal isEnemy: boolean = world:has(entity, Enemy)\nprint(isEnemy) -- Output: true\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;The first Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;The second Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;c&quot;,
+                    &quot;desc&quot;: &quot;The third Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;d&quot;,
+                    &quot;desc&quot;: &quot;The fourth Component&quot;,
+                    &quot;lua_type&quot;: &quot;Id?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3458,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;target&quot;,
+            &quot;desc&quot;: &quot;Given a relation, this will return the target of the `nth`\nrelationship of the entity, where the first element of a pair is the relation and the second element of a pair is the target.\n\n```lua\nlocal ChildOf = Jecs.ChildOf\nlocal Character = world:component()\nlocal Player = world:component()\n\nfor entity in world:query(Character) do\n\tlocal player: Entity? = world:target(entity, ChildOf)\n\tprint(world:has(player, Player)) -- Output: true\nend\n```\n\n```lua\nlocal Likes = world:component()\nlocal Name = Jecs.Name\nlocal Wildcard = Jecs.Wildcard\n\nfor id, name in world:query(Name, pair(Likes, Wildcard)) do\n\tlocal nth = 0\n\tlocal likes: Entity? = world:target(entity, Likes, nth)\n\n\twhile likes do\n\t\tlocal friendsName: string? = world:get(likes, Name)\n\t\tprint(`{name} likes {friendsName}`)\n\n\t\tnth += 1\n\t\tlikes = world:target(entity, Likes, nth)\n\t\tend\nend\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;relation&quot;,
+                    &quot;desc&quot;: &quot;The first element of a pair&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;nth:&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The target, or the second element of a pair&quot;,
+                    &quot;lua_type&quot;: &quot;Id?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3523,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;parent&quot;,
+            &quot;desc&quot;: &quot;Returns the parent of an entity, where the parent is the target of a\n`ChildOf` relationship, or nil if there is no relationship pair.\n\n```lua\nlocal ChildOf = Jecs.ChildOf\nlocal Character = world:component()\nlocal Player = world:component()\n\nfor entity in world:query(Character) do\n\tlocal player: Entity? = world:parent(entity)\n\tprint(world:has(player, Player)) -- Output: true\nend\n```\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Id?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3585,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;entity&quot;,
+            &quot;desc&quot;: &quot;Spawns a new entity, at the specified id if given.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The id to spawn the entity at&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3598,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;remove&quot;,
+            &quot;desc&quot;: &quot;Removes a component from the given entity.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;desc&quot;: &quot;The component to remove&quot;,
+                    &quot;lua_type&quot;: &quot;Id&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3677,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;delete&quot;,
+            &quot;desc&quot;: &quot;Deletes an entity, as well as all of it&#x27;s components and relationships.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3710,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;clear&quot;,
+            &quot;desc&quot;: &quot;Clears all of the components and relationships from the given entity, but does not delete the entity. Instead, you can use [World:delete] to delete an entity and all of it&#x27;s components.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3910,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;exists&quot;,
+            &quot;desc&quot;: &quot;Given an entity id, returns `true` if the id exists in the world,\nor `false`, disregarding whether or not the entity is alive.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3939,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;contains&quot;,
+            &quot;desc&quot;: &quot;Given an entity id, returns `true` if the id exists and is alive\nin the world, or `false`.\n\t&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;The Entity Id&quot;,
+                    &quot;lua_type&quot;: &quot;Entity&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3953,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;cleanup&quot;,
+            &quot;desc&quot;: &quot;Cleans the world of empty archetypes.\n\nThe interval at which you should call this method varies per\napplication, and you should profile your application to determine\nthis interval.\n\t&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3967,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;component&quot;,
+            &quot;desc&quot;: &quot;Creates a new component.\n\n:::tip\nComponents are also entities in Jecs, where the first 256\nentity ids are reserved for components.\n:::\n\t&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Component&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 4002,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [],
+    &quot;types&quot;: [
+        {
+            &quot;name&quot;: &quot;Column&quot;,
+            &quot;desc&quot;: &quot;&quot;,
+            &quot;lua_type&quot;: &quot;{ any }&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 18,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Archetype&quot;,
+            &quot;desc&quot;: &quot;Represents the internal storage of the ECS.\nFor more information on Archetypes, read [here](https://github.com/Ukendio/jecs/blob/main/how_to/030_archetypes.luau).\r&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;name&quot;: &quot;id&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;types&quot;,
+                    &quot;lua_type&quot;: &quot;{ Entity }&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;type&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entities&quot;,
+                    &quot;lua_type&quot;: &quot;{ Entity }&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;columns&quot;,
+                    &quot;lua_type&quot;: &quot;{ Column }&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;columnsMap&quot;,
+                    &quot;lua_type&quot;: &quot;{ [Entity]: Column }&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 32,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Listener&quot;,
+            &quot;desc&quot;: &quot;A callback type used in [World:added] and [World:changed].\n\t&quot;,
+            &quot;lua_type&quot;: &quot;(entity: Entity, id: Id&lt;T&gt;, value: T, oldArchetype: Archetype) -&gt; ()&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 3266,
+                &quot;path&quot;: &quot;src/jecs.luau&quot;
+            }
+        }
+    ],
+    &quot;name&quot;: &quot;World&quot;,
+    &quot;desc&quot;: &quot;A world stores all of your Entities and Components, providing an\nAPI to manage them.\n\t&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 2798,
+        &quot;path&quot;: &quot;src/jecs.luau&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#Archetype" class="table-of-contents__link toc-highlight">Archetype</a></li><li><a href="#Column" class="table-of-contents__link toc-highlight">Column</a></li><li><a href="#Listener" class="table-of-contents__link toc-highlight">Listener</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#add" class="table-of-contents__link toc-highlight">:add</a></li><li><a href="#added" class="table-of-contents__link toc-highlight">:added</a></li><li><a href="#changed" class="table-of-contents__link toc-highlight">:changed</a></li><li><a href="#children" class="table-of-contents__link toc-highlight">:children</a></li><li><a href="#cleanup" class="table-of-contents__link toc-highlight">:cleanup</a></li><li><a href="#clear" class="table-of-contents__link toc-highlight">:clear</a></li><li><a href="#component" class="table-of-contents__link toc-highlight">:component</a></li><li><a href="#contains" class="table-of-contents__link toc-highlight">:contains</a></li><li><a href="#delete" class="table-of-contents__link toc-highlight">:delete</a></li><li><a href="#each" class="table-of-contents__link toc-highlight">:each</a></li><li><a href="#entity" class="table-of-contents__link toc-highlight">:entity</a></li><li><a href="#exists" class="table-of-contents__link toc-highlight">:exists</a></li><li><a href="#get" class="table-of-contents__link toc-highlight">:get</a></li><li><a href="#has" class="table-of-contents__link toc-highlight">:has</a></li><li><a href="#parent" class="table-of-contents__link toc-highlight">:parent</a></li><li><a href="#query" class="table-of-contents__link toc-highlight">:query</a></li><li><a href="#range" class="table-of-contents__link toc-highlight">:range</a></li><li><a href="#remove" class="table-of-contents__link toc-highlight">:remove</a></li><li><a href="#removed" class="table-of-contents__link toc-highlight">:removed</a></li><li><a href="#set" class="table-of-contents__link toc-highlight">:set</a></li><li><a href="#target" class="table-of-contents__link toc-highlight">:target</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 Jecs Authors. Built with Moonwave and Docusaurus</div></div></div></footer></div>
+</body>
+</html>
