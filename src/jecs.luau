@@ -13,6 +13,22 @@ type Column = { any }
 
 type Map<K, V> = { [K]: V }
 
+--- @type Column { any }
+--- @within World
+
+--- @interface Archetype
+--- @within World
+---
+--- .id number
+--- .types { Entity }
+--- .type string
+--- .entities { Entity }
+--- .columns { Column }
+--- .columnsMap { [Entity]: Column }
+---
+--- Represents the internal storage of the ECS.
+---
+--- For more information on Archetypes, read [here](https://github.com/Ukendio/jecs/blob/main/how_to/030_archetypes.luau).
 export type Archetype = {
 	id: number,
 	types: Ty,
@@ -72,9 +88,33 @@ type function ecs_id_t(first: type, second: type)
 	return p
 end
 
+--- @type Entity number
+--- @within Jecs
+---
+--- An alias for [Jecs.Id].
 export type Entity<T = any> = { __T: T }
+
+--- @type Id number
+--- @within Jecs
+---
+--- An Id represents an Entity, a Component, or a Pair. In Jecs, it is
+--- typed as `{ __T: T }` to preserve types on Entities/Components, though
+--- it is essentially just a number.
 export type Id<T = any> = { __T: T }
+
+--- @type Pair number
+--- @within Jecs
+---
+--- Represents a relationship, where the first element is the relation,
+--- and the second element is the target.
+---
+--- You can create pairs with [Jecs.pair].
 export type Pair<First=any, Second=any> = ecs_pair_t<Entity<First>, Entity<Second>>
+
+--- @type Component number
+--- @within Jecs
+---
+--- An alias for [Jecs.Id].
 export type Component<T=any> = { __T: T }
 export type Id2<First, Second=nil> = ecs_id_t<First, Second>
 
@@ -362,19 +402,176 @@ local ECS_ID_IS_EXCLUSIVE =                0b0100
 local ECS_ID_MASK =                   	   0b0000
 
 local HI_COMPONENT_ID =                       256
+
+--- @prop OnAdd number
+--- @within Jecs
+---
+--- A Component Trait for setting a hook onto a Component, which will
+--- run when the Component has been added to an Entity.
+---
+--- ```lua
+--- local Transform: Id<vector> = world:component()
+---
+--- world:set(Transform, Jecs.OnAdd, function(entity: Entity, id: Id<T>, data: T)
+--- 	-- `Transform` has been added to `entity`
+--- end)
+--- ```
 local EcsOnAdd =             HI_COMPONENT_ID +  1
+
+--- @prop OnRemove number
+--- @within Jecs
+---
+--- A Component Trait for setting a hook onto a Component, which will
+--- run when the Component has been removed to an Entity.
+---
+--- ```lua
+--- local Transform: Id<vector> = world:component()
+---
+--- world:set(Transform, Jecs.OnRemove, function(entity: Entity, id: Id<T>)
+--- 	-- `Transform` has been removed from `entity`
+--- end)
+--- ```
 local EcsOnRemove =          HI_COMPONENT_ID +  2
+
+--- @prop OnChange number
+--- @within Jecs
+---
+--- A Component Trait for setting a hook onto a Component, which will
+--- run when the data of a Component has been changed on an Entity.
+---
+--- ```lua
+--- local Transform: Id<vector> = world:component()
+---
+--- world:set(Transform, Jecs.OnChange, function(entity: Entity, id: Id<T>, data: T)
+--- 	-- `Transform` on `entity` has been changed to `data`
+--- end)
+--- ```
 local EcsOnChange =          HI_COMPONENT_ID +  3
+
+--- @prop Wildcard number
+--- @within Jecs
+---
+--- An Id used for Wildcard Queries.
+---
+--- ```lua
+--- local Likes = world:component()
+--- local Name = Jecs.Name
+--- local Wildcard = Jecs.Wildcard
+---
+--- for id, name in world:query(Name, pair(Likes, Wildcard)) do
+--- 	local nth = 0
+--- 	local likes: Entity? = world:target(entity, Likes, nth)
+---
+--- 	while likes do
+--- 		local friendsName: string? = world:get(likes, Name)
+--- 		print(`{name} likes {friendsName}`)
+---
+--- 		nth += 1
+--- 		likes = world:target(entity, Likes, nth)
+--- 	end
+--- end
+--- ```
 local EcsWildcard =          HI_COMPONENT_ID +  4
+
+--- @prop ChildOf number
+--- @within Jecs
+---
+--- An Id used for Parent-Child hierarchies using Relationships.
+---
+--- ```lua
+--- local ChildOf = Jecs.ChildOf
+--- local Character = world:component()
+--- local Player = world:component()
+---
+--- for entity in world:query(Character) do
+--- 	local player: Entity? = world:parent(entity)
+--- 	print(world:has(player, Player)) -- Output: true
+--- end
+--- ```
 local EcsChildOf =           HI_COMPONENT_ID +  5
 local EcsComponent =         HI_COMPONENT_ID +  6
+
+--- @prop OnDelete number
+--- @within Jecs
+---
+--- A Cleanup Condition which executes when the Entity is deleted.
+---
+--- This is meant to be used with [Jecs.Remove] and [Jecs.Delete] to
+--- implement Cleanup Traits.
 local EcsOnDelete =          HI_COMPONENT_ID +  7
+
+--- @prop OnDeleteTarget number
+--- @within Jecs
+---
+--- A Cleanup Condition for Relationships which executes when the
+--- target of the relationship is deleted, where the target is the second
+--- element of a pair.
+---
+--- This is meant to be used with [Jecs.Remove] and [Jecs.Delete] to
+--- implement Cleanup Traits.
 local EcsOnDeleteTarget =    HI_COMPONENT_ID +  8
+
+--- @prop Delete number
+--- @within Jecs
+---
+--- When used as apart of a Cleanup Trait, it will delete all entities
+--- with the relevant Id.
+---
+--- ```lua
+--- local OnDelete = Jecs.OnDelete
+--- local Delete = Jecs.Delete
+---
+--- local Component = world:component()
+--- world:add(Component, Jecs.pair(OnDelete, Delete))
+---
+--- local entity = world:entity()
+--- world:add(entity, Component)
+---
+--- world:delete(Component) -- `entity` will be deleted.
+--- ```
 local EcsDelete =            HI_COMPONENT_ID +  9
+
+--- @prop Remove number
+--- @within Jecs
+---
+--- When used as apart of a Cleanup Trait, it will delete all entities
+--- with the relevant Id.
+---
+--- ```lua
+--- local OnDelete = Jecs.OnDelete
+--- local Remove = Jecs.Remove
+---
+--- local Component = world:component()
+--- world:add(Component, Jecs.pair(OnDelete, Remove))
+---
+--- local entity = world:entity()
+--- world:add(entity, Component)
+---
+--- world:delete(Component) -- `Component` will be removed from `enttiy`
+--- ```
 local EcsRemove =            HI_COMPONENT_ID + 10
+
+--- @prop Name number
+--- @within Jecs
+---
+--- An Id used for setting names on entities.
+---
+--- ```lua
+--- local Name = Jecs.Name
+---
+--- local alice = world:entity()
+--- world:set(alice, Name, "Alice")
+--- ```
 local EcsName =              HI_COMPONENT_ID + 11
 local EcsOnArchetypeCreate = HI_COMPONENT_ID + 12
 local EcsOnArchetypeDelete = HI_COMPONENT_ID + 13
+
+--- @prop Exclusive number
+--- @within Jecs
+---
+--- A Component Trait for marking relationships as exclusive, meaning
+--- that the entity can only ever have one target for the relation marked
+--- as exclusive, where the target is the second element of a pair.
 local EcsExclusive =         HI_COMPONENT_ID + 14
 local EcsRest =              HI_COMPONENT_ID + 15
 
@@ -397,6 +594,12 @@ local ecs_metadata: Map<i53, Map<i53, any>> = {}
 local ecs_max_component_id = 0
 local ecs_max_tag_id = EcsRest
 
+--- @function component
+--- @within Jecs
+---
+--- @return Component<T>
+---
+--- Preregisters a component, without a [World].
 local function ECS_COMPONENT()
 	ecs_max_component_id += 1
 	if ecs_max_component_id > HI_COMPONENT_ID then
@@ -405,11 +608,28 @@ local function ECS_COMPONENT()
 	return ecs_max_component_id
 end
 
+--- @function tag
+--- @within Jecs
+---
+--- @return Component
+---
+--- Preregisters a tag component, without a [World].
 local function ECS_TAG()
 	ecs_max_tag_id += 1
 	return ecs_max_tag_id
 end
 
+--- @function meta
+--- @within Jecs
+---
+--- Sets metadata onto a Component, without a [World].
+---
+--- ```lua
+--- local Name = Jecs.Name
+--- local Position = Jecs.component()
+---
+--- Jecs.meta(Position, Name, "Position")
+--- ```
 local function ECS_META(id: i53, ty: i53, value: any?)
 	local bundle = ecs_metadata[id]
 	if bundle == nil then
@@ -464,6 +684,21 @@ local function ECS_ENTITY_T_HI(e: i53): i24
 	return e // ECS_ENTITY_MASK
 end
 
+--- @function pair
+--- @within Jecs
+---
+--- Encodes two Ids into one, to represent a Relationship.
+---
+--- ```lua
+--- local Likes = world:component()
+---
+--- local alice = world:entity()
+--- local bob = world:entity()
+---
+--- world:add(bob, Jecs.pair(Likes, alice))
+--- ```
+---
+--- For more information on pairs, read [here](https://github.com/Ukendio/jecs/blob/main/how_to/013_pairs.luau).
 local function ECS_PAIR(pred: i53, obj: i53): i53
 	pred %= ECS_ENTITY_MASK
 	obj %= ECS_ENTITY_MASK
@@ -1018,6 +1253,22 @@ local function archetype_create(world: world, id_types: { i53 }, ty, prev: i53?)
 	return archetype
 end
 
+--[=[
+	@method range
+	@within World
+
+	@param rangeBegin number -- The id to start at
+	@param rangeEnd number? -- The optional id to end at
+
+	Enforces that entities created will have ids between the given range.
+
+	```lua
+	world:range(1000, 5000)
+
+	local entity = world:entity()
+	print(entity) -- Will be >= 1000 and < 5000
+	```
+]=]
 local function world_range(world: world, range_begin: number, range_end: number?)
 	local entity_index = world.entity_index
 
@@ -1236,6 +1487,14 @@ end
 
 local function NOOP() end
 
+--[=[
+	@method archetypes
+	@within Query
+
+	@return { Archetype }
+
+	Returns an array of Archetypes compatible with the query.
+]=]
 local function query_archetypes(query: query)
 	local compatible_archetypes = query.compatible_archetypes
 	if not compatible_archetypes then
@@ -1298,6 +1557,15 @@ local function query_archetypes(query: query)
 	return compatible_archetypes
 end
 
+--[=[
+	@method with
+	@within Query
+
+	@param ... Id -- The Components to filter for
+	@return Query
+
+	Extends the query to filter for entities with the given component(s).
+]=]
 local function query_with(query: query, ...: i53)
 	local ids = query.ids
 	local with = { ... }
@@ -1306,12 +1574,29 @@ local function query_with(query: query, ...: i53)
 	return query
 end
 
+--[=[
+	@method without
+	@within Query
+
+	@param ... Id -- The Components to filter for
+	@return Query
+
+	Extends the query to filter for entities without the given component(s).
+]=]
 local function query_without(query: query, ...: i53)
 	local without = { ... }
 	query.filter_without = without
 	return query
 end
 
+--[=[
+	@method iter
+	@within Query
+
+	@return () -> (Id, ...: any)
+
+	A method for the old Luau type solver to fix the types for the query.
+]=]
 local function query_iter_init(query: QueryInner): () -> (number, ...any)
 	local world_query_iter_next
 
@@ -1670,6 +1955,16 @@ local function query_iter_init(query: QueryInner): () -> (number, ...any)
 	return world_query_iter_next
 end
 
+--[=[
+	@method __iter
+	@within Query
+
+	@return Id
+	@return ...any
+
+	Iterating over a Query will return the Entity Id, followed by the
+	values of your components, or nil if the component has no value.
+]=]
 local function query_iter(query): () -> (number, ...any)
 	local query_next = query.next
 	if not query_next then
@@ -1678,6 +1973,35 @@ local function query_iter(query): () -> (number, ...any)
 	return query_next
 end
 
+--[=[
+	@method cached
+	@within Query
+
+	@return Query
+
+	Returns a cached query.
+
+	:::caution
+	A cached query is meant to be created once, and then used many times.
+	Avoid creating a cached query in your actual systems, as to not create
+	a cached query every frame.
+	:::
+
+	```lua
+	local function system(world: World)
+		local enemies = world
+			:query(Health, Position)
+			:with(Enemy)
+			:cached()
+
+		return function()
+			for id, health, position in enemies do
+				-- ...
+			end
+		end
+	end
+	```
+]=]
 local function query_cached(query: QueryInner)
 	local ids = query.ids
 	local lastArchetype = 1
@@ -2127,6 +2451,15 @@ local function query_cached(query: QueryInner)
 	return cached_query
 end
 
+--[=[
+	@method has
+	@within Query
+
+	@param entity Entity -- The Entity Id
+	@return boolean
+
+	Returns `true` if the query has the given entity, or `false`.
+]=]
 local function query_has(query: QueryInner, entity: i53)
 	local world = query.world :: world
 	local r = entity_index_try_get(world.entity_index, entity)
@@ -2157,6 +2490,10 @@ local function query_has(query: QueryInner, entity: i53)
 	return true
 end
 
+--- @class Query
+---
+--- An object for filtering and iterating over entities with a specific
+--- set of Components.
 local Query = {}
 Query.__index = Query
 Query.__iter = query_iter
@@ -2167,6 +2504,26 @@ Query.archetypes = query_archetypes
 Query.cached = query_cached
 Query.has = query_has
 
+--[=[
+	@method query
+	@within World
+
+	@param ... Id -- The Components to query for
+	@return Query -- The Query object
+
+	Creates a [Query] object to iterate over all entities with the given
+	components, returning the entity id and values of each component.
+
+	:::tip
+	Queries can do much more! See [Query] to see the additional methods you can chain together.
+	:::
+
+	```lua
+	for id, health, position in world:query(Health, Position):with(Enemy) do
+		-- ...
+	end
+	```
+]=]
 local function world_query(world: World, ...)
 	local ids = { ... }
 
@@ -2178,6 +2535,24 @@ local function world_query(world: World, ...)
 
 	return q
 end
+
+--[=[
+	@method each
+	@within World
+
+	@param id Id -- The Component Id
+	@return () -> Entity -- An iterator that returns all relevant entities
+
+	Allows for the iteration over all entities with the given component.
+
+	```lua
+	local Component = world:component()
+
+	for id in world:each(Component) do
+		-- ...
+	end
+	```
+]=]
 local function world_each(world: world, id: i53): () -> i53
 	local idr = world.component_index[id]
 	if not idr then
@@ -2212,6 +2587,22 @@ local function world_each(world: world, id: i53): () -> i53
 	end
 end
 
+--[=[
+	@method children
+	@within World
+
+	@param parent Entity -- The Parent Entity
+	@return () -> Entity -- An iterator that returns all relevant entities
+
+	Allows for the iteration over all entities that are a child of the
+	given entity.
+
+	```lua
+	for child in world:children(parent) do
+		-- ...
+	end
+	```
+]=]
 local function world_children(world: world, parent: i53)
 	return world_each(world, ECS_PAIR(EcsChildOf, parent))
 end
@@ -2361,6 +2752,10 @@ local function ecs_bulk_remove(world: world, entity: i53, ids: { i53 })
 	end
 end
 
+--- @function world
+--- @within Jecs
+---
+--- Creates a new [World].
 local function world_new()
 	local eindex_dense_array = {} :: { i53 }
 	local eindex_sparse_array = {} :: { record }
@@ -2394,6 +2789,12 @@ local function world_new()
 	-- `world:component` will not pollute the global registration of components.
 	local max_component_id = ecs_max_component_id
 
+	--[=[
+		@class World
+
+		A world stores all of your Entities and Components, providing an
+		API to manage them.
+	]=]
 	local world = {
 		archetype_edges = archetype_edges,
 
@@ -2556,6 +2957,27 @@ local function world_new()
 		return to
 	end
 
+	--[=[
+		@method set
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param id Id<T> -- The Component Id to set
+		@param data T
+
+		Assigns a value to a component on the given entity, adding the
+		component if the entity does not already have it.
+
+		```lua
+		local Apples = world:component()
+		local Eats = world:component()
+		local Name = world:component()
+
+		local entity = world:entity()
+		world:set(entity, Name, "Bob")
+		world:set(entity, Jecs.pair(Eats, Apples), 10) -- Bob ate 10 apples!
+		```
+	]=]
 	local function world_set(world: world, entity: i53, id: i53, data): ()
 		local record = entity_index_try_get_unsafe(entity)
 		if not record then
@@ -2658,6 +3080,28 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method add
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param id Id<T> -- The Component Id to add
+
+		Adds a component to the given entity.
+
+		```lua
+		local Enemy = world:component()
+		local Dislikes = world:component()
+		local Player = world:component()
+
+		local player = world:entity()
+		world:add(player, Player)
+
+		local entity = world:entity()
+		world:add(entity, Enemy)
+		world:add(entity, Jecs.pair(Dislikes, player))
+		```
+	]=]
 	local function world_add(
 		world: world,
 		entity: i53,
@@ -2755,6 +3199,34 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method get
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param a Id<A> -- The first Component
+		@param b Id<B>? -- The second Component
+		@param c Id<C>? -- The third Component
+		@param d Id<D>? -- The fourth Component
+
+		@return A?
+		@return B?
+		@return C?
+		@return D?
+
+		Retrieves the value(s) of up to 4 components, returning `nil` if
+		the component is a tag or not present on the entity.
+
+		```lua
+		local Health = world:component()
+
+		local entity = world:entity()
+		world:set(entity, Health, 100)
+
+		local health: number? = world:get(entity, Health)
+		print(health) -- Output: 100
+		```
+	]=]
 	local function world_get(world: world, entity: i53,
 		a: i53, b: i53?, c: i53?, d: i53?, e: i53?): ...any
 		local record = entity_index_try_get_unsafe(entity)
@@ -2785,10 +3257,27 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@type Listener (entity: Entity, id: Id<T>, value: T, oldArchetype: Archetype) -> ()
+		@within World
+
+		A callback type used in [World:added] and [World:changed].
+	]=]
 	type Listener<T> =
 		& ((e: i53, id: i53, value: T, oldarchetype: archetype) -> ())
 		& ((e: i53, id: i53, delete: boolean?) -> ())
 
+	--[=[
+		@method added
+		@within World
+
+		@param component Id -- The Component to listen for
+		@param fn Listener -- The function to call when a component is added
+		@return () -> () -- A function to cleanup the listener
+
+		Sets a callback that is invoked when the given component is added
+		to an entity.
+	]=]
 	world.added = function<T>(_: world, component: i53, fn: Listener<T>)
 		local listeners = signals.added[component]
 		if not listeners then
@@ -2829,6 +3318,17 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method changed
+		@within World
+
+		@param component Id -- The Component to listen for
+		@param fn Listener -- The function to call when a component's value is changed
+		@return () -> () -- A function to cleanup the listener
+
+		Sets a callback that is invoked when the given component's value is
+		changed on an entity.
+	]=]
 	world.changed = function<T>(
 		_: world,
 		component: i53,
@@ -2874,6 +3374,17 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method removed
+		@within World
+
+		@param id Id -- The Component to listen for
+		@param fn (entity: Entity, id: Id, deleted: boolean?) -> () -- The function to call when a component is removed
+		@return () -> () -- A function to cleanup the listener
+
+		Sets a callback that is invoked when the given component is removed
+		from an entity.
+	]=]
 	world.removed = function<T>(_: world, component: i53, fn: (i53, i53, boolean?) -> ())
 		local listeners = signals.removed[component]
 		if not listeners then
@@ -2918,6 +3429,32 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method has
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param a Id -- The first Component
+		@param b Id? -- The second Component
+		@param c Id? -- The third Component
+		@param d Id? -- The fourth Component
+
+		@return boolean
+
+		Checks if up to 4 components are present on an entity, returning
+		`true` if the entity has all 4 components or `false` if the entity
+		does not have at least one.
+
+		```lua
+		local Enemy = world:component()
+
+		local entity = world:entity()
+		world:add(entity, Enemy)
+
+		local isEnemy: boolean = world:has(entity, Enemy)
+		print(isEnemy) -- Output: true
+		```
+	]=]
 	local function world_has(world: World, entity: i53,
 		a: i53, b: i53?, c: i53?, d: i53?, e: i53?): boolean
 
@@ -2940,6 +3477,49 @@ local function world_new()
 			(e == nil or error("args exceeded"))
 	end
 
+	--[=[
+		@method target
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param relation Id -- The first element of a pair
+		@param nth: number?
+
+		@return Id? -- The target, or the second element of a pair
+
+		Given a relation, this will return the target of the `nth`
+		relationship of the entity, where the first element of a pair is the relation and the second element of a pair is the target.
+
+		```lua
+		local ChildOf = Jecs.ChildOf
+		local Character = world:component()
+		local Player = world:component()
+
+		for entity in world:query(Character) do
+			local player: Entity? = world:target(entity, ChildOf)
+			print(world:has(player, Player)) -- Output: true
+		end
+		```
+
+		```lua
+		local Likes = world:component()
+		local Name = Jecs.Name
+		local Wildcard = Jecs.Wildcard
+
+		for id, name in world:query(Name, pair(Likes, Wildcard)) do
+			local nth = 0
+			local likes: Entity? = world:target(entity, Likes, nth)
+
+			while likes do
+				local friendsName: string? = world:get(likes, Name)
+				print(`{name} likes {friendsName}`)
+
+				nth += 1
+				likes = world:target(entity, Likes, nth)
+				end
+		end
+		```
+	]=]
 	local function world_target(world: world, entity: i53, relation: i53, index: number?): i53?
 		local record = entity_index_try_get_unsafe(entity)
 		if not record then
@@ -2980,10 +3560,41 @@ local function world_new()
 		    ECS_PAIR_SECOND(nth))
 	end
 
+	--[=[
+		@method parent
+		@within World
+
+		@param entity Entity -- The Entity Id
+
+		@return Id?
+
+		Returns the parent of an entity, where the parent is the target of a
+		`ChildOf` relationship, or nil if there is no relationship pair.
+
+		```lua
+		local ChildOf = Jecs.ChildOf
+		local Character = world:component()
+		local Player = world:component()
+
+		for entity in world:query(Character) do
+			local player: Entity? = world:parent(entity)
+			print(world:has(player, Player)) -- Output: true
+		end
+		```
+	]=]
 	local function world_parent(world: world, entity: i53): i53?
 		return world_target(world, entity, EcsChildOf, 0)
 	end
 
+	--[=[
+		@method entity
+		@within World
+
+		@param id number? -- The id to spawn the entity at
+		@return Entity -- The Entity Id
+
+		Spawns a new entity, at the specified id if given.
+	]=]
 	local function world_entity(world: world, entity: i53?): i53
 		if entity then
 			local index = ECS_ID(entity)
@@ -3054,6 +3665,15 @@ local function world_new()
 		return entity_index_new_id(entity_index)
 	end
 
+	--[=[
+		@method remove
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@param id Id -- The component to remove
+
+		Removes a component from the given entity.
+	]=]
 	local function world_remove(world: world, entity: i53, id: i53)
 		local record = entity_index_try_get_unsafe(entity)
 		if not record then
@@ -3079,6 +3699,14 @@ local function world_new()
 		end
 	end
 
+	--[=[
+		@method delete
+		@within World
+
+		@param entity Entity -- The Entity Id
+
+		Deletes an entity, as well as all of it's components and relationships.
+	]=]
 	local function world_delete(world: world, entity: i53)
 		local record = entity_index_try_get_unsafe(entity)
 		if not record then
@@ -3271,6 +3899,14 @@ local function world_new()
 		eindex_dense_array[i_swap] = ECS_GENERATION_INC(entity)
 	end
 
+	--[=[
+		@method clear
+		@within World
+
+		@param entity Entity -- The Entity Id
+
+		Clears all of the components and relationships from the given entity, but does not delete the entity. Instead, you can use [World:delete] to delete an entity and all of it's components.
+	]=]
 	local function world_clear(world: world, entity: i53)
 		local record = entity_index_try_get_unsafe(entity)
 		if not record then
@@ -3290,14 +3926,44 @@ local function world_new()
 		record.row = nil :: any
 	end
 
+	--[=[
+		@method exists
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@return boolean
+
+		Given an entity id, returns `true` if the id exists in the world,
+		or `false`, disregarding whether or not the entity is alive.
+	]=]
 	local function world_exists(world: world, entity: i53): boolean
 		return entity_index_try_get_any(entity) ~= nil
 	end
 
+	--[=[
+		@method contains
+		@within World
+
+		@param entity Entity -- The Entity Id
+		@return boolean
+
+		Given an entity id, returns `true` if the id exists and is alive
+		in the world, or `false`.
+	]=]
 	local function world_contains(world: world, entity: i53): boolean
 		return entity_index_is_alive(entity_index, entity)
 	end
 
+	--[=[
+		@method cleanup
+		@within World
+
+		Cleans the world of empty archetypes.
+
+		The interval at which you should call this method varies per
+		application, and you should profile your application to determine
+		this interval.
+	]=]
 	local function world_cleanup(world: world)
 		for _, archetype in archetypes do
 			if #archetype.entities == 0 then
@@ -3320,6 +3986,19 @@ local function world_new()
 		world.archetype_index = new_archetype_map
 	end
 
+	--[=[
+		@method component
+		@within World
+
+		@return Component
+
+		Creates a new component.
+
+		:::tip
+		Components are also entities in Jecs, where the first 256
+		entity ids are reserved for components.
+		:::
+	]=]
 	local function world_component(world: world): i53
 		max_component_id += 1
 		if max_component_id > HI_COMPONENT_ID then
@@ -3417,6 +4096,12 @@ end
 local function ecs_entity_record(world: world, entity: i53)
 	return entity_index_try_get(world.entity_index, entity)
 end
+
+--- @class Jecs
+---
+--- Just a stupidly fast Entity Component System.\
+--- \
+--- The Repository for Jecs can be found [here](https://github.com/Ukendio/jecs).
 
 return {
 	world = world_new :: () -> World,
