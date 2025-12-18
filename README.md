@@ -14,8 +14,8 @@ A Community Wiki for Jecs, hosted at https://yetanotherclown.github.io/jecs-comm
 
 
 - [API Reference](https://yetanotherclown.github.io/jecs-community/api)
-- [Resources](https://yetanotherclown.github.io/jecs-community/api)
-- [Addons](https://yetanotherclown.github.io/jecs-community/api)
+- [Resources](https://yetanotherclown.github.io/jecs-community/docs/resources)
+- [Addons](https://yetanotherclown.github.io/jecs-community/docs/addons)
 
 ## Purpose
 
