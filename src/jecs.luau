@@ -403,7 +403,7 @@ local ECS_ID_MASK =                   	   0b0000
 
 local HI_COMPONENT_ID =                       256
 
---- @prop OnAdd number
+--- @prop OnAdd Id
 --- @within Jecs
 ---
 --- A Component Trait for setting a hook onto a Component, which will
@@ -418,11 +418,11 @@ local HI_COMPONENT_ID =                       256
 --- ```
 local EcsOnAdd =             HI_COMPONENT_ID +  1
 
---- @prop OnRemove number
+--- @prop OnRemove Id
 --- @within Jecs
 ---
 --- A Component Trait for setting a hook onto a Component, which will
---- run when the Component has been removed to an Entity.
+--- run when the Component has been removed from an Entity.
 ---
 --- ```lua
 --- local Transform: Id<vector> = world:component()
@@ -433,7 +433,7 @@ local EcsOnAdd =             HI_COMPONENT_ID +  1
 --- ```
 local EcsOnRemove =          HI_COMPONENT_ID +  2
 
---- @prop OnChange number
+--- @prop OnChange Id
 --- @within Jecs
 ---
 --- A Component Trait for setting a hook onto a Component, which will
@@ -448,7 +448,7 @@ local EcsOnRemove =          HI_COMPONENT_ID +  2
 --- ```
 local EcsOnChange =          HI_COMPONENT_ID +  3
 
---- @prop Wildcard number
+--- @prop Wildcard Id
 --- @within Jecs
 ---
 --- An Id used for Wildcard Queries.
@@ -473,7 +473,7 @@ local EcsOnChange =          HI_COMPONENT_ID +  3
 --- ```
 local EcsWildcard =          HI_COMPONENT_ID +  4
 
---- @prop ChildOf number
+--- @prop ChildOf Id
 --- @within Jecs
 ---
 --- An Id used for Parent-Child hierarchies using Relationships.
@@ -491,7 +491,7 @@ local EcsWildcard =          HI_COMPONENT_ID +  4
 local EcsChildOf =           HI_COMPONENT_ID +  5
 local EcsComponent =         HI_COMPONENT_ID +  6
 
---- @prop OnDelete number
+--- @prop OnDelete Id
 --- @within Jecs
 ---
 --- A Cleanup Condition which executes when the Entity is deleted.
@@ -500,7 +500,7 @@ local EcsComponent =         HI_COMPONENT_ID +  6
 --- implement Cleanup Traits.
 local EcsOnDelete =          HI_COMPONENT_ID +  7
 
---- @prop OnDeleteTarget number
+--- @prop OnDeleteTarget Id
 --- @within Jecs
 ---
 --- A Cleanup Condition for Relationships which executes when the
@@ -511,11 +511,11 @@ local EcsOnDelete =          HI_COMPONENT_ID +  7
 --- implement Cleanup Traits.
 local EcsOnDeleteTarget =    HI_COMPONENT_ID +  8
 
---- @prop Delete number
+--- @prop Delete Id
 --- @within Jecs
 ---
 --- When used as apart of a Cleanup Trait, it will delete all entities
---- with the relevant Id.
+--- with the relevant id.
 ---
 --- ```lua
 --- local OnDelete = Jecs.OnDelete
@@ -531,11 +531,11 @@ local EcsOnDeleteTarget =    HI_COMPONENT_ID +  8
 --- ```
 local EcsDelete =            HI_COMPONENT_ID +  9
 
---- @prop Remove number
+--- @prop Remove Id
 --- @within Jecs
 ---
 --- When used as apart of a Cleanup Trait, it will delete all entities
---- with the relevant Id.
+--- with the relevant id.
 ---
 --- ```lua
 --- local OnDelete = Jecs.OnDelete
@@ -551,7 +551,7 @@ local EcsDelete =            HI_COMPONENT_ID +  9
 --- ```
 local EcsRemove =            HI_COMPONENT_ID + 10
 
---- @prop Name number
+--- @prop Name Id
 --- @within Jecs
 ---
 --- An Id used for setting names on entities.
@@ -566,7 +566,7 @@ local EcsName =              HI_COMPONENT_ID + 11
 local EcsOnArchetypeCreate = HI_COMPONENT_ID + 12
 local EcsOnArchetypeDelete = HI_COMPONENT_ID + 13
 
---- @prop Exclusive number
+--- @prop Exclusive Id
 --- @within Jecs
 ---
 --- A Component Trait for marking relationships as exclusive, meaning
