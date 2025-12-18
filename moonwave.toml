@@ -1,0 +1,13 @@
+title = "Jecs Community Wiki"
+tagline = "A Community Wiki for Jecs"
+changelog = false
+
+classOrder = [
+	"Jecs",
+	"World",
+	"Query"
+]
+
+[footer]
+style = "dark"
+copyright = "Copyright © 2025 Jecs Authors. Built with Moonwave and Docusaurus."
