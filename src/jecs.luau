@@ -687,6 +687,8 @@ end
 --- @function pair
 --- @within Jecs
 ---
+--- @return Id
+---
 --- Encodes two Ids into one, to represent a Relationship.
 ---
 --- ```lua
@@ -2754,6 +2756,8 @@ end
 
 --- @function world
 --- @within Jecs
+---
+--- @return World
 ---
 --- Creates a new [World].
 local function world_new()
