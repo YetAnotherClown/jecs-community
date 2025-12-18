@@ -9,7 +9,7 @@ A collection of third-party Jecs addons made by the community. If you would like
 
 *You can find first-party addons/modules in the [Jecs repository](https://github.com/Ukendio/jecs/tree/main/modules)!*
 
-## Development tools
+### Development tools
 
 - [jabby](https://github.com/alicesaidhi/jabby)
   - A Jecs debugger with a string-based query language and entity editing capabilities.
@@ -22,7 +22,7 @@ A collection of third-party Jecs addons made by the community. If you would like
 
 ### Helpers
 
-- [jecs_ob](https://github.com/Ukendio/jecs/blob/main/addons/ob.luau)
+- [jecs_ob](https://github.com/Ukendio/jecs/blob/main/modules/ob.luau)
   - Observers & Monitors for queries.
 
 - [hammer](https://github.com/Mark-Marks/hammer)
