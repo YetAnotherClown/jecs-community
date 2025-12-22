@@ -47,6 +47,8 @@ Planck also provides plugins for Jabby, Matter Hooks, and more.
 
 - [feces](https://github.com/NeonD00m/feces)
   - A generalized replication system for Jecs.
+- [replecs](https://github.com/PepeElToro41/replecs)
+  - A feature rich, fast, flexible, powerful, and runtime/library agnostic replication library for ECS.
 
 ### Input
 
