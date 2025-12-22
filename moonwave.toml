@@ -2,6 +2,8 @@ title = "Jecs Community Wiki"
 tagline = "A Community Wiki for Jecs"
 changelog = false
 
+gitSourceBranch = "main"
+
 classOrder = [
 	"Jecs",
 	"World",
