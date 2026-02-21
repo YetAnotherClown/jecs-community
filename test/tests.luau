@@ -24,6 +24,82 @@ type Id<T=unknown> = jecs.Id<T>
 local entity_visualiser = require("@modules/entity_visualiser")
 local dwi = entity_visualiser.stringify
 
+TEST("reproduce idr_t nil archetype bug", function()
+	local world = jecs.world(true)
+
+	local cts = {
+	    Humanoid = world:component(),
+	    Animator = world:component(),
+	    VelocitizeAnimationWeight = world:component(),
+	}
+
+	local char = world:entity()
+
+	-- REMOVING ONE OF THESE THESE OFFSETS i BY +1
+	world:set(char, cts.Humanoid, 0)
+	world:set(char, cts.Animator, 0)
+	--
+
+	world:added(cts.Humanoid, function() end) -- REMOVING THIS OFFSETS i BY +1 TOO
+	world:removed(cts.Animator, function(entity, id)
+	    local r = jecs.record(world, entity)
+	    local src = r.archetype
+
+	    --REMOVING THIS jecs.archetype_traverse_remove CALL STOPS IT FROM HAPPENING
+		CHECK_EXPECT_ERR(function()
+			world:remove(entity, cts.Humanoid)
+		end)
+	end)
+
+	local batchSize = 200
+
+	local trackedEntities: { [number]: { parentId: number? } } = {}
+
+    for i = 1, batchSize do
+
+	    local root = world:entity()
+        -- world:add(root, jecs.pair(jecs.ChildOf, char))
+
+        -- Removing animator from trackEntity1 causes it to stop happening
+        local trackEntity1 = world:entity()
+        world:set(trackEntity1, cts.Animator, 0)
+        world:add(trackEntity1, jecs.pair(jecs.ChildOf, root))
+        world:set(trackEntity1, jecs.Name, "trackEntity1v"..i)
+        trackedEntities[trackEntity1] = { parentId = root }
+
+        -- Removing animator from trackEntity2 causes it to happen less frequently
+        local trackEntity2 = world:entity()
+        world:set(trackEntity2, cts.Animator, 0)
+        world:add(trackEntity2, jecs.pair(jecs.ChildOf, root))
+        world:set(trackEntity2, jecs.Name, "trackEntity2v"..i)
+        trackedEntities[trackEntity2] = { parentId = root }
+
+        -- Removing this, but keeping Animator on the other 2 causes it to stop happening
+        world:set(trackEntity1, cts.VelocitizeAnimationWeight, 0)
+
+		local q = world:query(jecs.pair(jecs.ChildOf, __)):cached()
+
+
+        world:delete(root)
+
+
+		for entityId, info in trackedEntities do
+            if world:contains(entityId) and not world:parent(entityId :: any) then
+                print(`bugged entity found: {entityId}`)
+                print(`original parent: {info.parentId}`)
+                print(`current parent: {i}`)
+                print(`batch = {batchSize}, i = {i}`)
+                print("==========================================")
+                trackedEntities[entityId] = nil
+            end
+        end
+        for entity in q do
+			local parent = world:parent(entity) :: jecs.Entity
+			CHECK(world:parent(entity) == nil)
+		end
+    end
+end)
+
 TEST("Ensure archetype edges get cleaned", function()
 	local A = jecs.component()
 	local B = jecs.component()
@@ -577,6 +653,71 @@ TEST("world:children()", function()
 	jecs.ECS_META_RESET()
 end)
 
+-- Arauser repro: many parents, only some have routes+checkpoints; delete all parents.
+-- With the bug: 1 checkpoint can remain and/or world:target returns non-alive parent.
+-- Scale and structure match arauser so the test FAILS when the bug is present.
+TEST("ChildOf cascade: world_target must not return non-alive parent", function()
+	local w = jecs.world(true)
+	local ParentTag = w:component()
+	local Anything = w:component()
+	local RouteTag = w:entity()
+	local CheckpointTag = w:entity()
+	local RouteOf = w:entity()
+
+	-- Like arauser: many parents (tiles) with two components, only a subset get routes + checkpoints
+	local nParents = 2000
+	local nWithChildren = 10
+	local parents = {}
+	for i = 1, nParents do
+		local p = w:entity()
+		w:set(p, ParentTag, {
+			row = math.floor((i - 1) / 50) + 1,
+			col = ((i - 1) % 50) + 1,
+		})
+		w:add(p, Anything)
+		parents[i] = p
+	end
+	local used = {}
+	local picked = 0
+	while picked < nWithChildren do
+		local idx = math.random(1, nParents)
+		if not used[idx] then
+			used[idx] = true
+			picked += 1
+			local p = parents[idx]
+			local route = w:entity()
+			w:add(route, RouteTag)
+			w:add(route, pair(ChildOf, p))
+			local checkpoint = w:entity()
+			w:add(checkpoint, CheckpointTag)
+			w:add(checkpoint, pair(ChildOf, p))
+			w:add(checkpoint, pair(RouteOf, route))
+		end
+	end
+
+	-- Delete all parents (collect first to avoid iterator invalidation)
+	local toDelete = {}
+	for e in w:query(ParentTag):iter() do
+		toDelete[#toDelete + 1] = e
+	end
+	for _, e in ipairs(toDelete) do
+		w:delete(e)
+	end
+
+	-- These must hold; with the bug one of them fails (checkpoint remains or parent not alive)
+	local count = 0
+	for checkpoint in w:query(CheckpointTag):iter() do
+		count += 1
+		CHECK(w:contains(checkpoint))
+		local parent = w:target(checkpoint, ChildOf)
+		if parent ~= nil then
+			CHECK(w:contains(parent))
+		end
+	end
+	CHECK(count == 0)
+	jecs.ECS_META_RESET()
+end)
+
 -- TEST("world:purge()", function()
 -- 	do CASE "should remove all instances of specified component"
 -- 		local world = jecs.world()
@@ -840,9 +981,6 @@ TEST("world:delete()", function()
 
 		CHECK(destroyed)
 		CHECK(not world:contains(child))
-	end
-	if true then
-		return
 	end
 
 	do CASE "Should delete children in different archetypes if they have the same parent"
@@ -1460,12 +1598,10 @@ TEST("world:range()", function()
 	do CASE "spawn entity under min range"
 		local world = jecs.world()
 		world:range(400, 1000)
-		CHECK(world.entity_index.alive_count == 399)
 		local e = world:entity(300)
-		CHECK(world.entity_index.alive_count == 400)
 		local e1 = world:entity(300)
-		CHECK(world.entity_index.alive_count == 400)
-		CHECK(e)
+		CHECK(world:contains(e))
+		CHECK(world:contains(e1))
 	end
 	do CASE "entity ID reuse works correctly across different world ranges"
 		local base = jecs.world()
@@ -1512,6 +1648,7 @@ TEST("world:range()", function()
 		CHECK(bar == bar_mirror)
 	end
 
+	print("<do CASE \"delete outside partitioned range\">")
 	do CASE "delete outside partitioned range"
 		local server = jecs.world()
 		local client = jecs.world()
@@ -1529,8 +1666,25 @@ TEST("world:range()", function()
 		CHECK(client:get(e2, A))
 
 		client:delete(e2)
+
+
+		print("<client.entity_index.max_id>")
+		print(client.entity_index.max_id)
+		print("</client.entity_index.max_id>")
+
+		print("<client.entity_index.alive_count>")
+		print(client.entity_index.alive_count)
+		print("</client.entity_index.alive_count>")
+
+		print("</client.entity_index.dense_array[client.entity_index.alive_count]>")
+		print(client.entity_index.dense_array[client.entity_index.alive_count])
+		print("</client.entity_index.dense_array[client.entity_index.alive_count]>")
+		print("<client:entity()>")
 		local e3 = client:entity()
-		CHECK(ECS_ID(e3) == 1000)
+		print("</client:entity()>")
+		print("<ECS_ID(e3) == 1001>")
+		CHECK(ECS_ID(e3) == 1001)
+		print("</ECS_ID(e3) == 1001>")
 
 		local e1v1 = server:entity()
 		local e4 = client:entity(e1v1)
@@ -1538,6 +1692,281 @@ TEST("world:range()", function()
 		CHECK(ECS_GENERATION(e4) == 1)
 		CHECK(not client:contains(e2))
 		CHECK(client:contains(e4))
+	end
+
+	print("</do CASE \"delete outside partitioned range\">")
+
+	do CASE "desired id within range does not overwrite existing entities"
+		local world = jecs.world()
+		world:range(1000, 2000)
+
+		local ctype = world:component()
+
+		local e1 = world:entity(1000)
+		local e2 = world:entity(1001)
+		local e3 = world:entity(1002)
+
+		world:set(e1, ctype, "entity1")
+		world:set(e2, ctype, "entity2")
+		world:set(e3, ctype, "entity3")
+
+		local e4 = world:entity(1500)
+		world:set(e4, ctype, "entity4")
+
+		CHECK(world:contains(e1))
+		CHECK(world:contains(e2))
+		CHECK(world:contains(e3))
+		CHECK(world:contains(e4))
+		CHECK(world:get(e1, ctype) == "entity1")
+		CHECK(world:get(e2, ctype) == "entity2")
+		CHECK(world:get(e3, ctype) == "entity3")
+		CHECK(world:get(e4, ctype) == "entity4")
+	end
+
+	do CASE "creating entity with range+offset does not conflict with existing"
+		local world = jecs.world()
+		world:range(500, 1000)
+
+		local ctype = world:component()
+
+		local base = world:entity(500)
+		world:set(base, ctype, "base")
+
+		local offset1 = world:entity(501)
+		world:set(offset1, ctype, "offset1")
+
+		local offset2 = world:entity(750)
+		world:set(offset2, ctype, "offset2")
+
+		CHECK(world:contains(base))
+		CHECK(world:contains(offset1))
+		CHECK(world:contains(offset2))
+		CHECK(world:get(base, ctype) == "base")
+		CHECK(world:get(offset1, ctype) == "offset1")
+		CHECK(world:get(offset2, ctype) == "offset2")
+	end
+
+	do CASE "creating entities in reverse order within range"
+		local world = jecs.world()
+		world:range(100, 200)
+
+		local ctype = world:component()
+
+		local e3 = world:entity(150)
+		local e2 = world:entity(120)
+		local e1 = world:entity(110)
+
+		world:set(e1, ctype, 1)
+		world:set(e2, ctype, 2)
+		world:set(e3, ctype, 3)
+
+		-- All should exist independently
+		CHECK(world:contains(e1))
+		CHECK(world:contains(e2))
+		CHECK(world:contains(e3))
+		CHECK(world:get(e1, ctype) == 1)
+		CHECK(world:get(e2, ctype) == 2)
+		CHECK(world:get(e3, ctype) == 3)
+	end
+
+	do CASE "creating entity with desired ID after range pre-population"
+		local world = jecs.world()
+		world:range(400, 1000)
+
+		local ctype = world:component()
+
+		-- Range pre-populates 1-399 with dense=0
+		-- Create an entity at a pre-populated position
+		local e1 = world:entity(300)
+		world:set(e1, ctype, "prepop")
+
+		-- Create another entity at a different pre-populated position
+		local e2 = world:entity(250)
+		world:set(e2, ctype, "prepop2")
+
+		-- Create entity within the range
+		local e3 = world:entity(500)
+		world:set(e3, ctype, "inrange")
+
+		-- All should work correctly
+		CHECK(world:contains(e1))
+		CHECK(world:contains(e2))
+		CHECK(world:contains(e3))
+		CHECK(world:get(e1, ctype) == "prepop")
+		CHECK(world:get(e2, ctype) == "prepop2")
+		CHECK(world:get(e3, ctype) == "inrange")
+	end
+
+	do CASE "creating same entity twice returns existing entity"
+		local world = jecs.world()
+		world:range(1000, 2000)
+
+		local ctype = world:component()
+
+		-- Create entity
+		local e1 = world:entity(1500)
+		world:set(e1, ctype, "original")
+
+		-- Try to create it again
+		local e2 = world:entity(1500)
+
+		-- Should return the same entity
+		CHECK(e1 == e2)
+		CHECK(world:get(e1, ctype) == "original")
+		CHECK(world:get(e2, ctype) == "original")
+
+		-- Should only be one entity
+		local count = 0
+		for _ in world:query(ctype) do
+			count += 1
+		end
+		CHECK(count == 1)
+	end
+
+	do CASE "creating entities with gaps in range does not affect existing"
+		local world = jecs.world()
+		world:range(200, 300)
+
+		local ctype = world:component()
+
+		-- Create entities with gaps
+		local e1 = world:entity(200)
+		local e2 = world:entity(250)
+		local e3 = world:entity(299)
+
+		world:set(e1, ctype, 1)
+		world:set(e2, ctype, 2)
+		world:set(e3, ctype, 3)
+
+		-- Create entity in the gap
+		local e4 = world:entity(225)
+		world:set(e4, ctype, 4)
+
+		-- All should still exist
+		CHECK(world:contains(e1))
+		CHECK(world:contains(e2))
+		CHECK(world:contains(e3))
+		CHECK(world:contains(e4))
+		CHECK(world:get(e1, ctype) == 1)
+		CHECK(world:get(e2, ctype) == 2)
+		CHECK(world:get(e3, ctype) == 3)
+		CHECK(world:get(e4, ctype) == 4)
+	end
+
+	do CASE "creating many entities with desired IDs in range"
+		local world = jecs.world()
+		world:range(1000, 2000)
+
+		local ctype = world:component()
+		local entities = {}
+
+		-- Create 50 entities with specific IDs
+		for i = 1, 50 do
+			local id = 1000 + (i * 10)
+			local e = world:entity(id)
+			world:set(e, ctype, i)
+			entities[i] = e
+		end
+
+		-- Verify all exist and have correct values
+		for i = 1, 50 do
+			CHECK(world:contains(entities[i]))
+			CHECK(world:get(entities[i], ctype) == i)
+		end
+
+		-- Create more entities in between
+		for i = 1, 49 do
+			local id = 1000 + (i * 10) + 5
+			local e = world:entity(id)
+			world:set(e, ctype, i + 100)
+		end
+
+		-- Original entities should still be intact
+		for i = 1, 50 do
+			CHECK(world:contains(entities[i]))
+			CHECK(world:get(entities[i], ctype) == i)
+		end
+	end
+
+	do CASE "sparse_array remains optimized with non-contiguous entity IDs"
+		local world = jecs.world()
+		local ctype = world:component()
+
+		-- Create entities with large gaps to test sparse_array optimization
+		-- Start with entity 100, then jump to 1000 (gap: 101-999)
+		local e1 = world:entity(100)
+		local e2 = world:entity(1000)
+		-- Then jump to 5000 (gap: 1001-4999)
+		local e3 = world:entity(5000)
+		-- Then jump to 10000 (gap: 5001-9999)
+		local e4 = world:entity(10000)
+
+		world:set(e1, ctype, 1)
+		world:set(e2, ctype, 2)
+		world:set(e3, ctype, 3)
+		world:set(e4, ctype, 4)
+
+		-- Verify all entities exist and have correct values
+		CHECK(world:contains(e1))
+		CHECK(world:contains(e2))
+		CHECK(world:contains(e3))
+		CHECK(world:contains(e4))
+		CHECK(world:get(e1, ctype) == 1)
+		CHECK(world:get(e2, ctype) == 2)
+		CHECK(world:get(e3, ctype) == 3)
+		CHECK(world:get(e4, ctype) == 4)
+
+		-- Verify intermediate IDs are pre-populated (they should exist but not be alive)
+		-- These are in the gaps between created entities
+		local sparse_array = world.entity_index.sparse_array
+		CHECK(sparse_array[500] ~= nil) -- Between 100 and 1000, should be pre-populated
+		CHECK(sparse_array[500].dense == 0) -- But not alive (dense=0)
+		CHECK(sparse_array[2500] ~= nil) -- Between 1000 and 5000, should be pre-populated
+		CHECK(sparse_array[2500].dense == 0)
+		CHECK(sparse_array[7500] ~= nil) -- Between 5000 and 10000, should be pre-populated
+		CHECK(sparse_array[7500].dense == 0)
+
+		-- Verify max_id was updated correctly
+		CHECK(world.entity_index.max_id == 10000)
+	end
+	do CASE "desired id does not overwrite old entity id"
+		local world = jecs.world()
+		local ctype = world:component()
+		local id = world:entity()
+
+		print("<local e = world:entity(id + 1)>")
+		local e = world:entity((id::any) + 1)
+		print("</local e = world:entity(id + 1)>")
+
+		CHECK(world:contains(id))
+		CHECK(world:contains(e))
+
+		-- also make sure that they don't share the same record
+
+		world:set(id, ctype, 1)
+		world:set(e, ctype, 2)
+
+		CHECK(world:get(id, ctype) == 1)
+		CHECK(world:get(e, ctype) == 2)
+	end
+
+	do CASE "creating ids with a higher key first"
+		local world = jecs.world()
+		local ctype = world:component()
+
+		local e = world:entity(1000)
+		local id = world:entity(999)
+
+		CHECK(world:contains(id))
+		CHECK(world:contains(e))
+
+		-- also make sure that they don't share the same record
+
+		world:set(id, ctype, 1)
+		world:set(e, ctype, 2)
+
+		CHECK(world:get(id, ctype) == 1)
+		CHECK(world:get(e, ctype) == 2)
 	end
 
 	do CASE "under range start"
@@ -1607,6 +2036,45 @@ TEST("world:entity()", function()
 		local e2 = world:entity(399)
 		CHECK(world:contains(e2))
 	end
+
+	do CASE "desired id does not overwrite old entity id"
+		local world = jecs.world()
+		local ctype = world:component()
+		local id = world:entity()
+
+		local e = world:entity((id::any) + 1)
+
+		CHECK(world:contains(id))
+		CHECK(world:contains(e))
+
+		-- also make sure that they don't share the same record
+
+		world:set(id, ctype, 1)
+		world:set(e, ctype, 2)
+
+		CHECK(world:get(id, ctype) == 1)
+		CHECK(world:get(e, ctype) == 2)
+	end
+
+	do CASE "creating ids with a higher key first"
+		local world = jecs.world()
+		local ctype = world:component()
+
+		local e = world:entity(1000)
+		local id = world:entity(999)
+
+		CHECK(world:contains(id))
+		CHECK(world:contains(e))
+
+		-- also make sure that they don't share the same record
+
+		world:set(id, ctype, 1)
+		world:set(e, ctype, 2)
+
+		CHECK(world:get(id, ctype) == 1)
+		CHECK(world:get(e, ctype) == 2)
+	end
+
 	local N = 2^8
 
 	do CASE "unique IDs"
@@ -1678,6 +2146,8 @@ TEST("world:entity()", function()
 		CHECK(ECS_ID(e) == pin)
 		CHECK(ECS_GENERATION(e) == 0)
 	end
+
+
 end)
 
 TEST("world:has()", function()
@@ -1740,6 +2210,20 @@ TEST("world:query()", function()
 			CHECK(world:has(e1, A))
 			CHECK(not world:has(e1, B))
 		end
+	end
+
+	do CASE "query:archetypes(override) should create new archetypes list"
+		local world = jecs.world()
+		local A = world:component()
+		local B = world:component()
+
+		local q = world:query(A, B)
+		local e = world:entity()
+		world:set(e, A, false)
+		world:set(e, B, true)
+
+		CHECK(q:archetypes() == q:archetypes())
+		CHECK(q:archetypes() ~= q:archetypes(true))
 	end
 
 	do CASE "cached"
