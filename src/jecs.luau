@@ -1528,7 +1528,6 @@ local function NOOP() end
 
 	Returns an array of Archetypes compatible with the query.
 ]=]
-local function query_archetypes(query: query)
 local function query_archetypes(query: query, override: boolean?)
 	local compatible_archetypes = query.compatible_archetypes
 	if not compatible_archetypes or override then
