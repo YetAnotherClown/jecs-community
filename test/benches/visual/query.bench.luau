@@ -2,11 +2,32 @@
 --!native
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Matter = require(ReplicatedStorage.DevPackages.Matter)
+local ecr = require(ReplicatedStorage.DevPackages.ecr)
+local newWorld = Matter.World.new()
 
 local jecs = require(ReplicatedStorage.Lib:Clone())
-local chrono = require(ReplicatedStorage.chronoecs:Clone())
+local mirror = require(ReplicatedStorage.mirror:Clone())
+local mcs = mirror.world()
 local ecs = jecs.world()
-local ccs = chrono.new()
+
+local A1 = Matter.component()
+local A2 = Matter.component()
+local A3 = Matter.component()
+local A4 = Matter.component()
+local A5 = Matter.component()
+local A6 = Matter.component()
+local A7 = Matter.component()
+local A8 = Matter.component()
+
+local B1 = ecr.component()
+local B2 = ecr.component()
+local B3 = ecr.component()
+local B4 = ecr.component()
+local B5 = ecr.component()
+local B6 = ecr.component()
+local B7 = ecr.component()
+local B8 = ecr.component()
 
 local D1 = ecs:component()
 local D2 = ecs:component()
@@ -17,74 +38,79 @@ local D6 = ecs:component()
 local D7 = ecs:component()
 local D8 = ecs:component()
 
-local E1 = ccs:component()
-local E2 = ccs:component()
-local E3 = ccs:component()
-local E4 = ccs:component()
-local E5 = ccs:component()
-local E6 = ccs:component()
-local E7 = ccs:component()
-local E8 = ccs:component()
+local E1 = mcs:component()
+local E2 = mcs:component()
+local E3 = mcs:component()
+local E4 = mcs:component()
+local E5 = mcs:component()
+local E6 = mcs:component()
+local E7 = mcs:component()
+local E8 = mcs:component()
 
-local d_components = {}
-local e_components = {}
-
-for i = 1, 150 do
-	ecs:component()
-	ccs:component()
-end
+local registry2 = ecr.registry()
 
 local function flip()
 	return math.random() >= 0.5
 end
 
-local N = 2 ^ 16 - 2
+local N = 2 ^ 12- 2
+local archetypes = {}
 
+local hm = 0
 for i = 1, N do
 	local entity = ecs:entity()
-	local m = ccs:entity()
+	local m = mcs:entity()
+	if flip() then
+		ecs:add(entity, entity)
+		mcs:add(m, m)
+	end
 
 	if flip() then
-		ecs:set(entity, D1, true)
-		ccs:add(m, E1)
-		ccs:set(m, E1, true)
+		mcs:set(m, E1, { value = 2 })
+		ecs:set(entity, D1, {value = true})
 	end
 	if flip() then
-		ecs:set(entity, D2, true)
-		ccs:add(m, E2)
-		ccs:set(m, E2, true)
+		ecs:set(entity, D2, { value = true })
+		mcs:set(m, E2, { value = 2 })
 	end
 	if flip() then
-		ecs:set(entity, D3, true)
-		ccs:add(m, E3)
-		ccs:set(m, E3, true)
+		ecs:set(entity, D3, { value = true })
+		mcs:set(m, E3, { value = 2 })
 	end
 	if flip() then
-		ecs:set(entity, D4, true)
-		ccs:add(m, E4)
-		ccs:set(m, E4, true)
+		ecs:set(entity, D4, { value = true })
+		mcs:set(m, E4, { value = 2 })
 	end
 	if flip() then
-		ecs:set(entity, D5, true)
-		ccs:add(m, E4)
-		ccs:set(m, E5, true)
+		ecs:set(entity, D5, { value = true })
+		mcs:set(m, E5, { value = 2 })
 	end
 	if flip() then
-		ecs:set(entity, D6, true)
-		ccs:add(m, E6)
-		ccs:set(m, E6, true)
+		ecs:set(entity, D6, { value = true })
+		mcs:set(m, E6, { value = 2 })
 	end
 	if flip() then
-		ecs:set(entity, D7, true)
-		ccs:add(m, E7)
-		ccs:set(m, E7, true)
+		ecs:set(entity, D7, { value = true })
+		mcs:set(m, E7, { value = 2 })
 	end
 	if flip() then
-		ccs:add(m, E8)
-		ecs:set(entity, D8, true)
-		ccs:set(m, E8, true)
+		ecs:set(entity, D8, { value = true })
+		mcs:set(m, E8, { value = 2 })
 	end
+
 end
+print("TEST", hm)
+
+local count = 0
+
+for _, archetype in ecs:query(D2, D4, D6, D8):archetypes() do
+	count += #archetype.entities
+end
+
+print(count)
+
+local mq = mcs:query(E1, E2, E3, E4)
+local jq = ecs:query(D1, D2, D3, D4)
 
 return {
 	ParameterGenerator = function()
@@ -101,15 +127,20 @@ return {
 		-- 	for entityId, firstComponent in registry2:view(B2, B4, B6, B8) do
 		-- 	end
 		-- end,
-		--
-		chrono = function()
-			for entityId, firstComponent in ccs:view(E2, E4, E6, E8) do
+
+		Mirror = function()
+			for i = 1, 10 do
+				for entityId, firstComponent in mq:iter() do
+				end
 			end
 		end,
 
 		Jecs = function()
-			for entityId, firstComponent in ecs:query(D2, D4, D6, D8) do
+			for i = 1, 10 do
+				for entityId, firstComponent in jq:iter() do
+				end
 			end
+
 		end,
 	},
 }

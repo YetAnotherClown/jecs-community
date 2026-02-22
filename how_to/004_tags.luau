@@ -16,8 +16,8 @@ local jecs = require("@jecs")
 --[[
 	There are two ways to create tags:
 
-	1. Using jecs.tag() - preregister a tag entity which will be allocated when you create the world.
-	2. Using world:entity() - creates a regular entity id
+	1. Using jecs.tag() to preregister a tag entity which will be allocated when you create the world.
+	2. Using world:entity() to create a regular entity id
 
 	The first method is the "proper" way to create tags but it hinges upon that
 	you do remember to create the world after declaring all of your
@@ -42,6 +42,12 @@ local entity = world:entity()
 world:add(entity, Dead) -- Adds the tag
 
 print(world:has(entity, Dead)) -- true
+
+-- jecs.is_tag(world, id) returns true if the id is a tag (no data).
+print(jecs.is_tag(world, Dead)) -- true
+
+local Position = world:component() :: jecs.Id<number>
+print(jecs.is_tag(world, Position)) -- false
 
 -- Tags are removed using world:remove(entity, component)
 

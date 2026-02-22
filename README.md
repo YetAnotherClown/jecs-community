@@ -12,6 +12,7 @@ A Community Wiki for Jecs, hosted at https://yetanotherclown.github.io/jecs-comm
 
 ### Community Resources
 
+If you wish to view the documentation inside Roblox Studio, you can find an importable model file [here](https://nightly.link/Ukendio/jecs/workflows/build-studio-docs.yaml/main/studio_docs.zip).
 
 - [API Reference](https://yetanotherclown.github.io/jecs-community/api)
 - [Resources](https://yetanotherclown.github.io/jecs-community/docs/resources)

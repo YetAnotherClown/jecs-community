@@ -76,9 +76,11 @@ export type CachedQuery<T extends Id[]> = {
 	 * Returns the matched archetypes of the query
 	 * @returns An array of archetypes of the query
 	 */
-	archetypes(): Archetype<T>[];
+	archetypes(override?: boolean): Archetype<T>[];
 
 	has(entity: Entity): boolean;
+	
+	fini(): void
 } & Iter<T>;
 
 export type Query<T extends Id[]> = {
@@ -121,7 +123,7 @@ export class World {
 	/**
 	 * Creates a new World.
 	 */
-	private constructor();
+	private constructor(DEBUG?: boolean);
 
 	/**
 	 * Enforces a check for entities to be created within a desired range.
@@ -280,7 +282,7 @@ export class World {
 	removed<T>(component: Entity<T>, listener: (e: Entity, id: Id<T>, deleted?: true) => void): () => void;
 }
 
-export function world(): World;
+export function world(DEBUG?: boolean): World;
 
 export function component<T>(): Entity<T>;
 
@@ -323,6 +325,9 @@ export function pair_second<P, O>(world: World, p: Pair<P, O>): Entity<O>;
 export function ECS_PAIR_FIRST(pair: Pair): number;
 export function ECS_PAIR_SECOND(pair: Pair): number;
 
+export function ECS_ID(entity: Entity): number;
+export function ECS_GENERATION(entity: Entity): number;
+
 type HookWithData = Entity<<T>(e: Entity<T>, id: Id<T>, data: T) => void> & {
 	readonly __nominal_HookWithData: unique symbol;
 };
@@ -354,9 +359,9 @@ export type ComponentRecord = {
 export function component_record(world: World, id: Id): ComponentRecord;
 
 type TagToUndefined<T> = T extends TagDiscriminator ? undefined : T
-type TrimOptional<T extends unknown[]> = T extends [...infer L, infer R] 
-	? unknown extends R 
-		? L | T | TrimOptional<L> 
+type TrimOptional<T extends unknown[]> = T extends [...infer L, infer R]
+	? unknown extends R
+		? L | T | TrimOptional<L>
 		: R extends undefined
 			? L | T | TrimOptional<L>
 			: T

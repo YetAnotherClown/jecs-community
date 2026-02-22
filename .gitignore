@@ -75,6 +75,7 @@ genhtml.perl
 rokit.toml
 package-lock.json
 mirror.luau
+studio_docs/
 
 # Docusaurus
 build/
