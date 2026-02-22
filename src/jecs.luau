@@ -453,6 +453,11 @@ local EcsOnRemove =          HI_COMPONENT_ID +  2
 --- ```
 local EcsOnChange =          HI_COMPONENT_ID +  3
 
+--- @prop w Id
+--- @within Jecs
+---
+--- An alias for [Jecs.Wildcard].
+
 --- @prop Wildcard Id
 --- @within Jecs
 ---
@@ -578,6 +583,13 @@ local EcsOnArchetypeDelete = HI_COMPONENT_ID + 13
 --- that the entity can only ever have one target for the relation marked
 --- as exclusive, where the target is the second element of a pair.
 local EcsExclusive =         HI_COMPONENT_ID + 14
+
+--- @prop Rest Id
+--- @within Jecs
+---
+--- Entity Ids begin after [Jecs.Rest], other than that, this reserved Id
+--- serves essentially no purpose. In the [Jecs Examples](https://github.com/Ukendio/jecs/blob/main/examples/queries/changetracking.luau), it is used
+--- as a component for use in change tracking.
 local EcsRest =              HI_COMPONENT_ID + 15
 
 local NULL_ARRAY = table.freeze({}) :: Column
@@ -655,6 +667,15 @@ local function ECS_COMBINE(id: number, generation: number): i53
 	return id + (generation * ECS_ENTITY_MASK)
 end
 
+--[=[
+	@function IS_PAIR
+	@within Jecs
+
+	@param id Id -- The id to check
+	@return boolean -- Whether it is or is not a pair
+
+	Given an Id, returns whether or not the Id is a pair.
+]=]
 local function ECS_IS_PAIR(e: number): boolean
 	return e > ECS_PAIR_OFFSET
 end
@@ -4623,6 +4644,17 @@ local function world_new(DEBUG: boolean?)
 	return world
 end
 
+--[=[
+	@function is_tag
+	@within Jecs
+
+	@param world World
+	@param id Id -- The id to check
+	@return boolean -- Whether it is or is not a tag
+
+	Given a World and an Id, returns whether or not the given
+	Id is a tag.
+]=]
 local function ecs_is_tag(world: world, entity: i53): boolean
 	if ECS_IS_PAIR(entity) then
 		return ecs_is_tag(world, ecs_pair_first(world, entity)) or ecs_is_tag(world, ecs_pair_second(world, entity))
